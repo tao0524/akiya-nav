@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+data/
+repomix-output*.xml
+backend-log.txt
+*.log
+backend-log.txtnotepad

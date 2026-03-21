@@ -1,0 +1,33 @@
+{
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "showLineNumbers": false
+  },
+  "include": [
+    "backend/app/**/*.py",
+    "backend/scripts/**/*.py",
+    "backend/requirements.txt",
+    "backend/Dockerfile",
+    "frontend/app.py",
+    "docker-compose.yml",
+    ".env.example",
+    "README.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      ".env",
+      "**/__pycache__/**",
+      "**/*.pyc",
+      "**/node_modules/**",
+      "data/**",
+      "repomix-output*.xml",
+      "**/*.log",
+      "backend-log.txt"
+    ]
+  }
+}
