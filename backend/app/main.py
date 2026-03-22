@@ -6,6 +6,7 @@ FastAPI アプリケーションのエントリーポイント
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import os
 
 from app.config import get_settings
 from app.database import init_db
@@ -50,10 +51,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS設定（フロントエンドからのアクセスを許可）
+# CORS設定
+# 環境変数 CORS_ORIGINS にカンマ区切りでURLを指定する
+# 例: "https://akiya-frontend.up.railway.app,https://example.com"
+# 未設定の場合は開発用に全許可（本番では必ず設定すること）
+_cors_origins_env = os.getenv("CORS_ORIGINS", "*")
+if _cors_origins_env == "*":
+    cors_origins = ["*"]
+else:
+    cors_origins = [origin.strip() for origin in _cors_origins_env.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 本番環境では具体的なオリジンを指定
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -72,12 +82,14 @@ app.include_router(mentor.router)     # Phase 4
 async def root():
     return {
         "message": "地域創生AIプラットフォーム API",
-        "version": "0.2.0",
+        "version": "0.4.0",
         "docs": "/docs",
         "status": "running",
         "features": {
             "phase1": "RAGチャット ✅",
             "phase2": "空き家マップ ✅",
+            "phase3": "移住サポート・DIY ✅",
+            "phase4": "メンターマッチング ✅",
         }
     }
 

@@ -22,28 +22,20 @@ services:
     env_file: .env
     ports:
       - "8080:8000"
-    volumes:
-      - ./backend:/app
-      - ./data:/data
     depends_on:
       db:
         condition: service_healthy
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # --reload を削除（本番用）、bind mount も削除
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
   frontend:
-    image: python:3.11-slim
+    build: ./frontend
     container_name: akiya_frontend
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
     ports:
       - "8501:8501"
     env_file: .env
     depends_on:
       - backend
-    command: >
-      sh -c "pip install streamlit requests folium --quiet &&
-             streamlit run app.py --server.address 0.0.0.0"
 
 volumes:
   pgdata:
