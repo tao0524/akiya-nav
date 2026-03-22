@@ -12,6 +12,9 @@ from app.database import init_db
 from app.routers import chat
 from app.routers import properties  # Phase 2
 from app.routers import diagnosis   # Phase 2後半
+from app.routers import migration   # Phase 3
+from app.routers import diy         # Phase 3
+from app.routers import mentor      # Phase 4
 
 settings = get_settings()
 
@@ -43,7 +46,7 @@ app = FastAPI(
 1. `POST /api/chat` に質問を送信
 2. `GET /api/properties` で物件一覧を取得
     """,
-    version="0.2.0",
+    version="0.4.0",
     lifespan=lifespan
 )
 
@@ -60,6 +63,9 @@ app.add_middleware(
 app.include_router(chat.router)
 app.include_router(properties.router)
 app.include_router(diagnosis.router)
+app.include_router(migration.router)  # Phase 3
+app.include_router(diy.router)        # Phase 3
+app.include_router(mentor.router)     # Phase 4
 
 
 @app.get("/", tags=["health"])

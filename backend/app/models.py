@@ -93,3 +93,75 @@ class Property(Base):
 
     def __repr__(self):
         return f"<Property id={self.id} title={self.title} city={self.city}>"
+    
+class RegionInfo(Base):
+    """
+    都道府県・市区町村の移住情報を格納するテーブル。
+    Phase 3: 移住サポート機能で使用。
+    """
+    __tablename__ = "region_info"
+
+    id = Column(Integer, primary_key=True, index=True)
+    prefecture = Column(String(10), index=True)
+    city = Column(String(50))
+    population = Column(Integer)
+    area_km2 = Column(String(20))
+    climate = Column(String(200))
+    subsidy_max = Column(Integer, default=0)
+    subsidy_detail = Column(Text)
+    job_support = Column(String(300))
+    industry = Column(String(200))
+    attraction = Column(Text)
+    challenge = Column(Text)
+    score_nature = Column(Integer, default=3)
+    score_convenience = Column(Integer, default=3)
+    score_subsidy = Column(Integer, default=3)
+    score_community = Column(Integer, default=3)
+    created_at = Column(DateTime, server_default=func.now())
+
+    def __repr__(self):
+        return f"<RegionInfo id={self.id} prefecture={self.prefecture} city={self.city}>"
+    
+class Mentor(Base):
+    """
+    メンター（地域専門家・移住経験者）情報を格納するテーブル。
+    Phase 4: メンターマッチング機能で使用。
+    """
+    __tablename__ = "mentors"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), nullable=False)
+    age = Column(Integer)
+    gender = Column(String(10))
+    prefecture = Column(String(10), index=True)
+    city = Column(String(50))
+    origin = Column(String(50))
+    specialties = Column(String(200))
+    migration_year = Column(Integer)
+    migration_from = Column(String(50))
+    migration_story = Column(Text)
+    can_help_with = Column(Text)
+    consultation_method = Column(String(100))
+    rating = Column(String(5), default="5.0")
+    consultation_count = Column(Integer, default=0)
+    is_available = Column(String(5), default="true")
+    bio = Column(Text)
+    created_at = Column(DateTime, server_default=func.now())
+
+    def __repr__(self):
+        return f"<Mentor id={self.id} name={self.name} prefecture={self.prefecture}>"
+
+
+class ConsultationRequest(Base):
+    """
+    メンターへの相談リクエストを格納するテーブル。
+    """
+    __tablename__ = "consultation_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    mentor_id = Column(Integer, index=True)
+    requester_name = Column(String(50))
+    requester_email = Column(String(100))
+    message = Column(Text)
+    status = Column(String(20), default="pending")
+    created_at = Column(DateTime, server_default=func.now())
