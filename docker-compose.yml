@@ -42,7 +42,7 @@ services:
     depends_on:
       - backend
     command: >
-      sh -c "pip install streamlit requests --quiet &&
+      sh -c "pip install streamlit requests folium --quiet &&
              streamlit run app.py --server.address 0.0.0.0"
 
 volumes:

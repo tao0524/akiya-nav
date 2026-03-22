@@ -41,3 +41,55 @@ class ChatHistory(Base):
     content = Column(Text)
     domain = Column(String(50))     # どの機能で使われたか
     created_at = Column(DateTime, server_default=func.now())
+
+
+class Property(Base):
+    """
+    空き家・空き地の物件情報を格納するテーブル。
+    Phase 2: 空き家マップ機能で使用。
+    """
+    __tablename__ = "properties"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    # 基本情報
+    title = Column(String(200), nullable=False)
+    description = Column(Text)
+
+    # 位置情報
+    prefecture = Column(String(10), index=True)
+    city = Column(String(50), index=True)
+    address = Column(String(200))
+    latitude = Column(String(20))
+    longitude = Column(String(20))
+
+    # 物件情報
+    property_type = Column(String(20))      # house / land / commercial
+    structure = Column(String(20))          # 木造 / RC / 鉄骨
+    area_m2 = Column(String(10))            # 建物面積（㎡）
+    land_area_m2 = Column(String(10))       # 土地面積（㎡）
+    built_year = Column(Integer)
+
+    # 取引条件
+    price = Column(Integer, default=0)      # 価格（万円）
+    price_type = Column(String(20), default="sale")  # sale / rent / free / negotiable
+    rent = Column(Integer, default=0)       # 賃料（万円/月）
+
+    # ステータス
+    status = Column(String(20), default="available", index=True)
+    # available / negotiating / contracted
+
+    # 活用ポテンシャル
+    potential_cafe = Column(String(10))     # high / medium / low
+    potential_lodging = Column(String(10))
+    potential_office = Column(String(10))
+    potential_farm = Column(String(10))
+
+    # ソース情報
+    source = Column(String(50), default="sample")  # sample / mlit / local_bank
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    def __repr__(self):
+        return f"<Property id={self.id} title={self.title} city={self.city}>"
