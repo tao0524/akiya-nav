@@ -12,6 +12,7 @@
     "backend/requirements.txt",
     "backend/Dockerfile",
     "frontend/app.py",
+    "frontend/pages/**/*.py",
     "docker-compose.yml",
     ".env.example",
     "README.md"
