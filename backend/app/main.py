@@ -97,16 +97,3 @@ async def root():
 @app.get("/health", tags=["health"])
 async def health_check():
     return {"status": "ok"}
-
-@app.post("/api/seed", tags=["admin"])
-async def seed_all():
-    """一時的なデータ投入エンドポイント（使用後は削除すること）"""
-    import subprocess
-    results = {}
-    for script in ["scripts/seed_properties.py", "scripts/seed_regions.py", "scripts/seed_mentors.py", "scripts/ingest.py"]:
-        args = ["python", script]
-        if script == "scripts/ingest.py":
-            args.append("--sample")
-        result = subprocess.run(args, capture_output=True, text=True)
-        results[script] = "✅ 成功" if result.returncode == 0 else f"❌ 失敗: {result.stderr}"
-    return results
