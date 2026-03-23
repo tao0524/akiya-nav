@@ -109,7 +109,7 @@ with st.sidebar:
 
 # ===== メインエリア =====
 st.markdown('<p class="main-title">🏡 空き家ナビ — 地域創生AIプラットフォーム</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">「AIが情報をつなぎ、人が知恵をつなぐ」 | Phase 1: RAGチャット</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">「AIが情報をつなぎ、人が知恵をつなぐ」</p>', unsafe_allow_html=True)
 st.divider()
 
 # セッション初期化

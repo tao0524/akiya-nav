@@ -250,7 +250,7 @@ def build_folium_map(properties: list) -> str:
 # ===== サイドバー: フィルター =====
 with st.sidebar:
     st.markdown("## 🗺️ 空き家マップ")
-    st.markdown("*Phase 2 — 全国物件検索*")
+    st.markdown("*全国物件検索*")
     st.divider()
 
     st.markdown("### 🔍 絞り込み")
@@ -301,7 +301,7 @@ with st.sidebar:
 
 # ===== メインエリア =====
 st.markdown('<p class="map-header">🗺️ 空き家マップ</p>', unsafe_allow_html=True)
-st.markdown('<p class="map-sub">全国の空き家・空き地を地図で探す — Phase 2</p>', unsafe_allow_html=True)
+st.markdown('<p class="map-sub">全国の空き家・空き地を地図で探す</p>', unsafe_allow_html=True)
 
 # フィルターを適用して物件取得
 filters = {
@@ -404,7 +404,7 @@ st.markdown("---")
 col_chat1, col_chat2 = st.columns([2, 1])
 with col_chat1:
     st.markdown("💬 **気になる物件の法律・補助金について相談したい？**")
-    st.caption("AIチャット（Phase 1）で空き家法・移住支援金・活用事例を質問できます")
+    st.caption("AIチャットで空き家法・移住支援金・活用事例を質問できます")
 with col_chat2:
     if st.button("🤖 AIに相談する →", type="primary", use_container_width=True):
         st.switch_page("app.py")
