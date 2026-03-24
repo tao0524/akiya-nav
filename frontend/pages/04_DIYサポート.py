@@ -29,7 +29,8 @@ with tab1:
         categories_data = cat_res.get("categories", [])
         category_map = {f"{c['icon']} {c['name']}": c["id"] for c in categories_data}
         category_display_map = {f"{c['icon']} {c['name']}": c for c in categories_data}
-    except Exception:
+    except Exception as e:
+        st.error(f"DIYカテゴリの取得に失敗しました: {e}")
         categories_data = []
         category_map = {}
         category_display_map = {}
@@ -224,3 +225,5 @@ with tab2:
             st.warning("カテゴリと作業詳細を入力してください。")
         else:
             st.info("左側でカテゴリと作業詳細を入力し、「チェックリストを生成」を押してください。")
+
+

@@ -83,7 +83,8 @@ def score_card_class(level):
 def fetch_properties():
     try:
         return get_properties({"limit": 100})
-    except Exception:
+    except Exception as e:
+        st.error(f"診断対象の物件データ取得に失敗しました: {e}")
         return []
 
 def run_diagnosis(property_id: int):
@@ -206,3 +207,5 @@ if "last_result" in st.session_state:
     st.markdown("💬 **補助金の詳細や法律について詳しく知りたい場合は、AIチャットに相談できます**")
     if st.button("🤖 RAGチャットで詳しく調べる →", type="secondary"):
         st.switch_page("app.py")
+
+

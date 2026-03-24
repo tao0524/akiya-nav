@@ -206,16 +206,8 @@ with tab3:
     if send_btn and question.strip():
         with st.spinner("AIが回答を生成中..."):
             try:
-                payload = {"question": question}
-                if pref_chat != "指定なし":
-                    payload["prefecture"] = pref_chat
-
-                res = requests.post(
-                    f"{BACKEND_URL}/api/migration/chat",
-                    json=payload,
-                    timeout=30
-                )
-                result = res.json()
+                prefecture = pref_chat if pref_chat != "指定なし" else None
+                result = migration_chat(question, prefecture)
 
                 st.markdown("### 🤖 AIの回答")
                 st.markdown(result.get("answer", "回答を取得できませんでした。"))

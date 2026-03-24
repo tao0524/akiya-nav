@@ -102,7 +102,8 @@ def potential_badge(level, label):
 def fetch_properties(filters: dict) -> list:
     try:
         return get_properties({k: v for k, v in filters.items() if v is not None})
-    except Exception:
+    except Exception as e:
+        st.error(f"物件データの取得に失敗しました: {e}")
         return []
 
 def build_folium_map(properties: list) -> str:
@@ -391,3 +392,5 @@ with col_chat1:
 with col_chat2:
     if st.button("🤖 AIに相談する →", type="primary", use_container_width=True):
         st.switch_page("app.py")
+
+
