@@ -4,10 +4,7 @@ frontend/pages/04_DIYサポート.py
 """
 
 import streamlit as st
-import requests
-import os
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from services.api import get_diy_categories, get_diy_advice, get_diy_checklist
 
 st.set_page_config(
     page_title="DIYサポート — 空き家ナビ",
@@ -28,8 +25,8 @@ with tab1:
 
     # カテゴリ一覧を取得
     try:
-        cat_res = requests.get(f"{BACKEND_URL}/api/diy/categories", timeout=5)
-        categories_data = cat_res.json().get("categories", [])
+        cat_res = get_diy_categories()
+        categories_data = cat_res.get("categories", [])
         category_map = {f"{c['icon']} {c['name']}": c["id"] for c in categories_data}
         category_display_map = {f"{c['icon']} {c['name']}": c for c in categories_data}
     except Exception:
@@ -91,12 +88,7 @@ with tab1:
                         if budget_val:
                             payload["budget"] = budget_val
 
-                        res = requests.post(
-                            f"{BACKEND_URL}/api/diy/advice",
-                            json=payload,
-                            timeout=60
-                        )
-                        result = res.json()
+                        result = get_diy_advice(payload)
                         advice = result.get("advice", {})
 
                         # 難易度バナー
@@ -157,8 +149,6 @@ with tab1:
                         if advice.get("professional_recommendation"):
                             st.markdown(f"🏢 **業者依頼を推奨するケース:** {advice['professional_recommendation']}")
 
-                    except requests.exceptions.ConnectionError:
-                        st.error(f"バックエンドに接続できません（{BACKEND_URL}）。")
                     except Exception as e:
                         st.error(f"エラーが発生しました: {e}")
 
@@ -198,12 +188,7 @@ with tab2:
         if checklist_btn and check_category and check_description:
             with st.spinner("チェックリストを生成中..."):
                 try:
-                    res = requests.post(
-                        f"{BACKEND_URL}/api/diy/checklist",
-                        json={"category": check_category, "description": check_description},
-                        timeout=30
-                    )
-                    data = res.json()
+                    data = get_diy_checklist({"category": check_category, "description": check_description})
                     checklist = data.get("checklist", {})
 
                     if checklist.get("pre_work_checks"):
@@ -232,8 +217,6 @@ with tab2:
                         for item in checklist["completion_checks"]:
                             st.markdown(f"☐ **{item['item']}** — {item.get('detail', '')}")
 
-                except requests.exceptions.ConnectionError:
-                    st.error(f"バックエンドに接続できません（{BACKEND_URL}）。")
                 except Exception as e:
                     st.error(f"エラーが発生しました: {e}")
 

@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
@@ -20,8 +20,10 @@ class Settings(BaseSettings):
     app_name: str = "地域創生AIナビ API"
     debug: bool = False
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
-    
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
 
 @lru_cache()
 def get_settings() -> Settings:

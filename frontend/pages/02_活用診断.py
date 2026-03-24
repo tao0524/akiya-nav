@@ -4,10 +4,7 @@ frontend/pages/02_活用診断.py
 """
 
 import streamlit as st
-import requests
-import os
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from services.api import get_properties, run_diagnosis as api_run_diagnosis
 
 st.set_page_config(
     page_title="活用可能性診断 — 空き家ナビ",
@@ -85,25 +82,15 @@ def score_card_class(level):
 
 def fetch_properties():
     try:
-        resp = requests.get(f"{BACKEND_URL}/api/properties", params={"limit": 100}, timeout=10)
-        return resp.json() if resp.status_code == 200 else []
+        return get_properties({"limit": 100})
     except Exception:
         return []
 
 def run_diagnosis(property_id: int):
     try:
-        resp = requests.post(
-            f"{BACKEND_URL}/api/diagnosis/{property_id}",
-            timeout=60
-        )
-        if resp.status_code == 200:
-            return resp.json(), None
-        return None, resp.json().get("detail", "エラーが発生しました")
-    except requests.exceptions.Timeout:
-        return None, "タイムアウトしました。再度お試しください。"
+        return api_run_diagnosis(property_id), None
     except Exception as e:
         return None, str(e)
-
 
 # ===== メイン =====
 

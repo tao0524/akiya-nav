@@ -6,7 +6,7 @@ GET  /api/chat/stats   : DB統計情報
 """
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -33,12 +33,14 @@ class ChatRequest(BaseModel):
         examples=["law_akiya", "subsidy_national", "case_study"]
     )
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "question": "相続した空き家の固定資産税について教えてください",
-            "domain": "law_akiya"
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "question": "相続した空き家の固定資産税について教えてください",
+                "domain": "law_akiya"
+            }
         }
-    })
+
 
 class ChatResponse(BaseModel):
     answer: str = Field(..., description="AIが生成した回答")

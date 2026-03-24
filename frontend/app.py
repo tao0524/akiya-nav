@@ -4,11 +4,8 @@ Streamlit を使ったチャットUI
 """
 
 import streamlit as st
-import requests
-import os
 from datetime import datetime
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from services.api import get_chat_stats, chat as api_chat
 
 # ===== ページ設定 =====
 st.set_page_config(
@@ -78,18 +75,13 @@ with st.sidebar:
     # DB統計
     st.markdown("### 📊 データベース情報")
     try:
-        resp = requests.get(f"{BACKEND_URL}/api/chat/stats", timeout=5)
-        if resp.status_code == 200:
-            stats = resp.json()
-            st.metric("登録文書数", f"{stats['total_documents']:,} チャンク")
-            if stats.get("by_domain"):
-                for domain, count in stats["by_domain"].items():
-                    st.caption(f"・{domain}: {count}件")
-        else:
-            st.warning("バックエンドに接続できません")
+        stats = get_chat_stats()
+        st.metric("登録文書数", f"{stats['total_documents']:,} チャンク")
+        if stats.get("by_domain"):
+            for domain, count in stats["by_domain"].items():
+                st.caption(f"・{domain}: {count}件")
     except Exception:
         st.error("⚠️ バックエンド未起動\n`docker-compose up` を実行してください")
-
     st.divider()
 
     # よくある質問（クイック入力）
@@ -153,35 +145,22 @@ if submitted and user_input.strip():
     # バックエンドにリクエスト
     with st.spinner("🔍 関連文書を検索・回答生成中..."):
         try:
-            resp = requests.post(
-                f"{BACKEND_URL}/api/chat",
-                json={"question": user_input, "domain": selected_domain},
-                timeout=60
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                answer = data["answer"]
-                sources = data.get("sources", [])
-                context_used = data.get("context_used", 0)
+            data = api_chat(user_input, selected_domain)
+            answer = data["answer"]
+            sources = data.get("sources", [])
+            context_used = data.get("context_used", 0)
 
-                # アシスタントの回答を履歴に追加
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": answer,
-                    "sources": sources,
-                    "context_used": context_used
-                })
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": answer,
+                "sources": sources,
+                "context_used": context_used
+            })
 
-                # 統計情報をサイドバーに表示
-                if context_used == 0:
-                    st.info("💡 関連文書が見つかりませんでした。ingest.py で文書を登録すると精度が上がります。")
-            else:
-                st.error(f"エラー: {resp.text}")
-        except requests.exceptions.ConnectionError:
-            st.error("⚠️ バックエンドに接続できません。`docker-compose up` を実行してください。")
+            if context_used == 0:
+                st.info("💡 関連文書が見つかりませんでした。ingest.py で文書を登録すると精度が上がります。")
         except Exception as e:
             st.error(f"エラーが発生しました: {str(e)}")
-
     st.rerun()
 
 # 会話クリアボタン

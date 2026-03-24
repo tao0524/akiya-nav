@@ -4,12 +4,9 @@ frontend/pages/01_空き家マップ.py
 """
 
 import streamlit as st
-import requests
-import os
 import json
 from datetime import datetime
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from services.api import get_properties, get_property_stats
 
 # ===== ページ設定 =====
 st.set_page_config(
@@ -104,17 +101,9 @@ def potential_badge(level, label):
 
 def fetch_properties(filters: dict) -> list:
     try:
-        resp = requests.get(
-            f"{BACKEND_URL}/api/properties",
-            params={k: v for k, v in filters.items() if v is not None},
-            timeout=10,
-        )
-        if resp.status_code == 200:
-            return resp.json()
-        return []
+        return get_properties({k: v for k, v in filters.items() if v is not None})
     except Exception:
         return []
-
 
 def build_folium_map(properties: list) -> str:
     """Foliumマップを構築してHTMLを返す"""
@@ -287,16 +276,11 @@ with st.sidebar:
     st.divider()
     st.markdown("### 📊 エリア別統計")
     try:
-        stats_resp = requests.get(f"{BACKEND_URL}/api/properties/stats", timeout=5)
-        if stats_resp.status_code == 200:
-            stats = stats_resp.json()
-            for s in stats[:8]:
-                st.caption(f"・{s['prefecture']}: {s['count']}件")
-        else:
-            st.caption("統計取得中...")
+        stats = get_property_stats()
+        for s in stats[:8]:
+            st.caption(f"・{s['prefecture']}: {s['count']}件")
     except Exception:
         st.caption("⚠️ バックエンド未接続")
-
 
 # ===== メインエリア =====
 st.markdown('<p class="map-header">🗺️ 空き家マップ</p>', unsafe_allow_html=True)

@@ -6,7 +6,7 @@ POST /api/diy/checklist  : DIYチェックリスト生成
 """
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 from typing import Optional
 from sqlalchemy.orm import Session
 from langchain_openai import ChatOpenAI
@@ -46,26 +46,28 @@ class DIYAdviceRequest(BaseModel):
         examples=["beginner"]
     )
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "category": "壁紙張り替え",
-            "description": "和室6畳の壁紙（クロス）を自分で張り替えたい。古い壁紙を剥がす作業から。",
-            "budget": 5,
-            "experience_level": "beginner"
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "category": "壁紙張り替え",
+                "description": "和室6畳の壁紙（クロス）を自分で張り替えたい。古い壁紙を剥がす作業から。",
+                "budget": 5,
+                "experience_level": "beginner"
+            }
         }
-    })
 
 
 class ChecklistRequest(BaseModel):
     category: str = Field(..., description="作業カテゴリ")
     description: str = Field(..., description="作業の詳細")
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "category": "フローリング張り替え",
-            "description": "リビング12畳のフローリングを無垢材に張り替える"
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "category": "フローリング張り替え",
+                "description": "リビング12畳のフローリングを無垢材に張り替える"
+            }
         }
-    })
 
 
 # ===== システムプロンプト =====

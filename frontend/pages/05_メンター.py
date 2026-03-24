@@ -4,10 +4,7 @@ frontend/pages/05_メンター.py
 """
 
 import streamlit as st
-import requests
-import os
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from services.api import match_mentors, get_mentors, send_consultation
 
 st.set_page_config(
     page_title="メンターマッチング — 空き家ナビ",
@@ -60,12 +57,7 @@ with tab1:
                         if specialty_match != "指定なし":
                             payload["specialty"] = specialty_match
 
-                        res = requests.post(
-                            f"{BACKEND_URL}/api/mentors/match",
-                            json=payload,
-                            timeout=60
-                        )
-                        result = res.json()
+                        result = match_mentors(payload)
 
                         if result.get("overall_advice"):
                             st.info(f"💡 **AIからのアドバイス:** {result['overall_advice']}")
@@ -106,8 +98,6 @@ with tab1:
                                     st.session_state["selected_mentor_name"] = mentor.get("name")
                                     st.info("「相談リクエスト」タブから送信してください。")
 
-                    except requests.exceptions.ConnectionError:
-                        st.error(f"バックエンドに接続できません（{BACKEND_URL}）。")
                     except Exception as e:
                         st.error(f"エラーが発生しました: {e}")
         else:
@@ -151,8 +141,7 @@ with tab2:
         if specialty_filter != "すべて":
             params["specialty"] = specialty_filter
 
-        res = requests.get(f"{BACKEND_URL}/api/mentors", params=params, timeout=10)
-        data = res.json()
+        data = get_mentors(params)
         mentors = data.get("mentors", [])
 
         if not mentors:
@@ -189,8 +178,6 @@ with tab2:
                         else:
                             st.warning("受付停止中")
 
-    except requests.exceptions.ConnectionError:
-        st.error(f"バックエンドに接続できません（{BACKEND_URL}）。")
     except Exception as e:
         st.error(f"エラー: {e}")
 
@@ -210,8 +197,8 @@ with tab3:
     with req_col1:
         # メンター選択
         try:
-            res = requests.get(f"{BACKEND_URL}/api/mentors", params={"available_only": "true"}, timeout=5)
-            mentors_list = res.json().get("mentors", [])
+            data = get_mentors({"available_only": "true"})
+            mentors_list = data.get("mentors", [])
             mentor_options = {f"{m['name']}（{m['prefecture']}・{'/'.join(m['specialties'][:2])}）": m["id"] for m in mentors_list}
         except Exception:
             mentor_options = {}
@@ -267,17 +254,8 @@ with tab3:
             else:
                 with st.spinner("送信中..."):
                     try:
-                        res = requests.post(
-                            f"{BACKEND_URL}/api/mentors/request",
-                            json={
-                                "mentor_id": mentor_id,
-                                "requester_name": requester_name,
-                                "requester_email": requester_email,
-                                "message": message
-                            },
-                            timeout=10
-                        )
-                        result = res.json()
+                        payload = {"mentor_id": mentor_id, "requester_name": requester_name, "requester_email": requester_email, "message": message}
+                        result = send_consultation(payload)
                         st.success(f"""
 ✅ **{result.get('mentor_name', '')}さんへのリクエストを送信しました！**
 
@@ -289,7 +267,5 @@ with tab3:
                         st.session_state.pop("selected_mentor_id", None)
                         st.session_state.pop("selected_mentor_name", None)
 
-                    except requests.exceptions.ConnectionError:
-                        st.error(f"バックエンドに接続できません（{BACKEND_URL}）。")
                     except Exception as e:
                         st.error(f"エラー: {e}")

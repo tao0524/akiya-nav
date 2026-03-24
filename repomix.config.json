@@ -15,7 +15,8 @@
     "frontend/pages/**/*.py",
     "docker-compose.yml",
     ".env.example",
-    "README.md"
+    "README.md",
+    "backend/tests/**/*.py"
   ],
   "ignore": {
     "useGitignore": true,

@@ -4,10 +4,7 @@ frontend/pages/03_移住サポート.py
 """
 
 import streamlit as st
-import requests
-import os
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from services.api import get_regions, compare_regions, migration_chat
 
 st.set_page_config(
     page_title="移住サポート — 空き家ナビ",
@@ -50,8 +47,7 @@ with tab1:
                 params["min_subsidy"] = min_subsidy
 
             try:
-                res = requests.get(f"{BACKEND_URL}/api/migration/regions", params=params, timeout=10)
-                data = res.json()
+                data = get_regions(params)
                 regions = data.get("regions", [])
 
                 if not regions:
@@ -92,8 +88,6 @@ with tab1:
                             if r.get("challenge"):
                                 st.warning(f"⚠️ **注意点:** {r['challenge']}")
 
-            except requests.exceptions.ConnectionError:
-                st.error(f"バックエンドに接続できません（{BACKEND_URL}）。Docker が起動しているか確認してください。")
             except Exception as e:
                 st.error(f"エラーが発生しました: {e}")
 
@@ -123,12 +117,7 @@ with tab2:
         compare_query = ",".join(pref_names)
 
         try:
-            res = requests.get(
-                f"{BACKEND_URL}/api/migration/compare",
-                params={"prefectures": compare_query},
-                timeout=10
-            )
-            data = res.json()
+            data = compare_regions(compare_query)
             regions = data.get("comparison", [])
 
             if not regions:
@@ -166,8 +155,6 @@ with tab2:
                         if r.get("challenge"):
                             st.warning(f"⚠️ {r['challenge'][:60]}...")
 
-        except requests.exceptions.ConnectionError:
-            st.error(f"バックエンドに接続できません（{BACKEND_URL}）。")
         except Exception as e:
             st.error(f"エラーが発生しました: {e}")
 

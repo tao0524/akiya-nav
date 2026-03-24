@@ -6,7 +6,7 @@ GET  /api/properties/stats  : 都道府県別統計
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import text, func
@@ -34,7 +34,8 @@ class PropertySummary(BaseModel):
     potential_cafe: Optional[str]
     potential_lodging: Optional[str]
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 
 class PropertyDetail(PropertySummary):

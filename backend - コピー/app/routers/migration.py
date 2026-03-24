@@ -7,7 +7,7 @@ GET  /api/migration/stats    : 移住データ統計
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -35,12 +35,13 @@ class MigrationChatRequest(BaseModel):
         examples=["長野県"]
     )
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "question": "子育て支援が充実している地域を教えてください",
-            "prefecture": None
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "question": "子育て支援が充実している地域を教えてください",
+                "prefecture": None
+            }
         }
-    })
 
 
 class RegionResponse(BaseModel):
@@ -61,7 +62,8 @@ class RegionResponse(BaseModel):
     score_subsidy: int
     score_community: int
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 
 # ===== エンドポイント =====

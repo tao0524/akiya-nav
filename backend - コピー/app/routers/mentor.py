@@ -8,7 +8,7 @@ GET  /api/mentors/stats     : メンター統計
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 from typing import Optional
 from sqlalchemy.orm import Session
 from langchain_openai import ChatOpenAI
@@ -36,13 +36,14 @@ class MatchRequest(BaseModel):
     prefecture: Optional[str] = Field(None, description="希望する移住先の都道府県")
     specialty: Optional[str] = Field(None, description="相談したい専門分野")
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "situation": "大阪から島根県に移住してカフェを開きたい。30代単身。古民家を活用したい。",
-            "prefecture": "島根県",
-            "specialty": "古民家再生"
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "situation": "大阪から島根県に移住してカフェを開きたい。30代単身。古民家を活用したい。",
+                "prefecture": "島根県",
+                "specialty": "古民家再生"
+            }
         }
-    })
 
 
 class ConsultationRequestSchema(BaseModel):
@@ -51,14 +52,15 @@ class ConsultationRequestSchema(BaseModel):
     requester_email: str = Field(..., min_length=1, max_length=100)
     message: str = Field(..., min_length=10, max_length=1000)
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "mentor_id": 1,
-            "requester_name": "山田太郎",
-            "requester_email": "yamada@example.com",
-            "message": "長野県への移住を検討しています。農業の始め方について相談させてください。"
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "mentor_id": 1,
+                "requester_name": "山田太郎",
+                "requester_email": "yamada@example.com",
+                "message": "長野県への移住を検討しています。農業の始め方について相談させてください。"
+            }
         }
-    })
 
 
 # ===== マッチングプロンプト =====
