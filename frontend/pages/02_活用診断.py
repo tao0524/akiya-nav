@@ -1,6 +1,6 @@
 """
-活用可能性診断 — Phase 2後半
-frontend/pages/02_活用診断.py に配置してください。
+活用可能性診断
+frontend/pages/02_活用診断.py
 """
 
 import streamlit as st
