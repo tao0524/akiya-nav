@@ -15,3 +15,5 @@ python-dotenv
 httpx
 langchain-text-splitters
 folium
+pytest
+pytest-mock
