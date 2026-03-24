@@ -64,7 +64,8 @@ async def get_properties(
     max_price: Optional[int] = Query(None, description="上限価格（万円）"),
     status: Optional[str] = Query(None, description="ステータス: available/negotiating"),
     potential: Optional[str] = Query(None, description="活用可能性: cafe/lodging/office/farm"),
-    limit: int = Query(200, ge=1, le=500),
+    page: int = Query(1, ge=1, description="ページ番号"),
+    limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     """
@@ -92,7 +93,8 @@ async def get_properties(
     elif potential == "farm":
         query = query.filter(Property.potential_farm == "high")
 
-    return query.limit(limit).all()
+    offset = (page - 1) * limit
+    return query.offset(offset).limit(limit).all()
 
 
 @router.get("/stats", response_model=list[PropertyStats], summary="都道府県別物件数")
