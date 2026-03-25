@@ -294,7 +294,7 @@ filters = {
     "price_type": price_type_filter,
     "potential": potential_filter,
     "status": status_filter,
-    "limit": 300,
+    "limit": 100,
 }
 properties = fetch_properties(filters)
 

@@ -17,7 +17,8 @@
     ".env.example",
     "README.md",
     "backend/tests/**/*.py",
-    "frontend/services/**/*.py"
+    "frontend/services/**/*.py",
+    "frontend/.streamlit/config.toml"
   ],
   "ignore": {
     "useGitignore": true,

@@ -200,7 +200,8 @@ with tab3:
             data = get_mentors({"available_only": "true"})
             mentors_list = data.get("mentors", [])
             mentor_options = {f"{m['name']}（{m['prefecture']}・{'/'.join(m['specialties'][:2])}）": m["id"] for m in mentors_list}
-        except Exception:
+        except Exception as e:
+            st.error(f"メンターの取得に失敗しました: {e}")
             mentor_options = {}
 
         if mentor_options:
