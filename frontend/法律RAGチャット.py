@@ -72,17 +72,7 @@ with st.sidebar:
 
     st.divider()
 
-    # DB統計
-    st.markdown("### 📊 データベース情報")
-    try:
-        stats = get_chat_stats()
-        st.metric("登録文書数", f"{stats['total_documents']:,} チャンク")
-        if stats.get("by_domain"):
-            for domain, count in stats["by_domain"].items():
-                st.caption(f"・{domain}: {count}件")
-    except Exception:
-        st.error("⚠️ バックエンド未起動\n`docker-compose up` を実行してください")
-    st.divider()
+    
 
     # よくある質問（クイック入力）
     st.markdown("### 💡 よくある質問")
