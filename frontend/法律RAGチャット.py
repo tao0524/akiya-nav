@@ -26,6 +26,7 @@ st.markdown("""
         padding: 1rem 1.2rem;
         border-radius: 0 8px 8px 0;
         margin: 0.5rem 0;
+        color: #1a1a1a;
     }
     .source-tag {
         display: inline-block;
